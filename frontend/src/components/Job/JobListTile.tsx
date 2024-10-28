@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { HiOutlineArrowRight } from "react-icons/hi";
+import { HiOutlineArrowRight, HiOutlineBookmark } from "react-icons/hi";
 import { useSearchParams } from "react-router-dom";
 import { useApplicationStore } from "../../store/ApplicationStore";
 import { useUserStore } from "../../store/UserStore";
+import { toast } from "react-toastify";
 
 const JobListTile = (props: any) => {
   // const { data, action }: { data: Job; action: string | undefined } = props;
@@ -20,6 +21,7 @@ const JobListTile = (props: any) => {
   );
 
   const [application, setApplication] = useState<Application | null>(null);
+  const [isJobSaved, setIsJobSaved] = useState<boolean>(false);
 
   useEffect(() => {
     const temp: Application | undefined = applicationList.find(
@@ -28,7 +30,12 @@ const JobListTile = (props: any) => {
       }
     );
     setApplication(temp || null);
-    console.log(temp);
+  }, [data, applicationList, userId]);
+
+  useEffect(() => {
+    const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
+    const jobExists = savedJobs.some((job: Job) => job._id === data._id);
+    setIsJobSaved(jobExists);
   }, [data]);
 
   const affilation = data.managerAffilication;
@@ -39,11 +46,31 @@ const JobListTile = (props: any) => {
   useEffect(() => {
     const id = searchParams.get("jobId");
     setActive(data._id === id);
-  }, [searchParams]);
+  }, [searchParams, data]);
 
   const handleClick = (e: any) => {
     e.preventDefault();
     setSearchParams({ jobId: data._id });
+  };
+
+  const handleSaveJob = (e: any) => {
+    e.stopPropagation();
+    const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
+    const jobIndex = savedJobs.findIndex((job: Job) => job._id === data._id);
+
+    if (jobIndex === -1) {
+      // Job does not exist, save it
+      savedJobs.push(data);
+      localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+      setIsJobSaved(true);
+      toast.success("Job saved successfully!");
+    } else {
+      // Job exists, unsave it
+      savedJobs.splice(jobIndex, 1);
+      localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+      setIsJobSaved(false);
+      toast.info("Job unsaved.");
+    }
   };
 
   const getAffiliationTag = (tag: string) => {
@@ -137,9 +164,7 @@ const JobListTile = (props: any) => {
                 <HiOutlineArrowRight />
                 Know more&nbsp;
               </p>
-            ) : (
-              <></>
-            )}
+            ) : null}
             {action === "view-questionnaire" ? (
               <p
                 className="inline-flex items-center flex-row-reverse text-xs text-[#00B633]"
@@ -148,9 +173,7 @@ const JobListTile = (props: any) => {
                 <HiOutlineArrowRight />
                 Fill Questionnaire&nbsp;
               </p>
-            ) : (
-              <></>
-            )}
+            ) : null}
             {action === "view-application" ? (
               <p
                 className="inline-flex items-center flex-row-reverse text-xs text-[#656565]"
@@ -159,10 +182,17 @@ const JobListTile = (props: any) => {
                 <HiOutlineArrowRight />
                 View Application&nbsp;
               </p>
-            ) : (
-              <></>
-            )}
+            ) : null}
             <p className="text-3xl">{pay}$/hr</p>
+            <button
+              className="ml-4 inline-flex items-center text-black cursor-pointer"
+              onClick={handleSaveJob}
+            >
+              <HiOutlineBookmark className="mr-1 text-2xl" />
+              <span className="text-black">
+                {isJobSaved ? "Unsave Job" : "Save Job"}
+              </span>
+            </button>
           </div>
         </div>
       </div>
