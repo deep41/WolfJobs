@@ -166,6 +166,33 @@ const CreateJob = () => {
                   }}
                 />
                 <TextField
+                  label="Skills preferred"
+                  type="text"
+                  {...register("skills")}
+                  error={!!errors.skills}
+                  helperText={errors.skills?.message}
+                  onChange={(e) => {
+                    // Update form state with comma-separated values
+                    const inputValue = e.target.value;
+                    const skillsArray = inputValue
+                      .split(",")
+                      .map((skill) => skill.trim());
+                    // Register the skills as a comma-separated string
+                    register("skills").onChange({
+                      target: { value: skillsArray.join(", ") },
+                    });
+                  }}
+                  sx={{
+                    "& label": { paddingLeft: (theme) => theme.spacing(1) },
+                    "& input": { paddingLeft: (theme) => theme.spacing(2.5) },
+                    "& fieldset": {
+                      paddingLeft: (theme) => theme.spacing(1.5),
+                      borderRadius: "10px",
+                    },
+                  }}
+                  multiline
+                />
+                <TextField
                   label="Job Description"
                   type="text"
                   {...register("description")}
