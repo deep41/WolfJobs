@@ -1,21 +1,16 @@
 import { useEffect, useState } from "react";
-import { HiOutlineArrowRight } from "react-icons/hi";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import { useApplicationStore } from "../../store/ApplicationStore";
 import { useUserStore } from "../../store/UserStore";
 
-const JobListTile = (props: any) => {
-  const { data }: { data: Job } = props;
-  let action = "view-more";
-
-  const [active, setActive] = useState<boolean>(true);
+const SaveJobListTile = ({ data }: { data: Job }) => {
+  const navigate = useNavigate(); // Initialize useNavigate
+  const [active, setActive] = useState<boolean>(false);
+  const [application, setApplication] = useState<Application | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const userId = useUserStore((state) => state.id);
   const userRole = useUserStore((state) => state.role);
-  const applicationList: Application[] = useApplicationStore(
-    (state) => state.applicationList
-  );
-  const [application, setApplication] = useState<Application | null>(null);
+  const applicationList: Application[] = useApplicationStore((state) => state.applicationList);
 
   useEffect(() => {
     const temp: Application | undefined = applicationList.find(
@@ -34,12 +29,10 @@ const JobListTile = (props: any) => {
     setActive(data._id === id);
   }, [searchParams, data]);
 
-  const handleClick = (e: any) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setSearchParams({ jobId: data._id });
+    navigate(`/explore?jobId=${data._id}`);
   };
-
-
 
   const getAffiliationTag = (tag: string) => {
     return tag.split("-").join(" ");
@@ -56,22 +49,9 @@ const JobListTile = (props: any) => {
     return "bg-[#FF2A2A]/10";
   };
 
-  const handleKnowMore = (e: any) => {
-    e.stopPropagation();
-    console.log("Know more");
-  };
-  const handleFillQuestionnaire = (e: any) => {
-    e.stopPropagation();
-    console.log("Fill Questionnaire");
-  };
-  const handleViewApplication = (e: any) => {
-    e.stopPropagation();
-    console.log("View Application");
-  };
-
   return (
-    <div className="my-3 " onClick={handleClick}>
-      <div className={`p-3 bg-white rounded-xl shadow-sm ${active ? "border-black " : "border-white"} border`}>
+    <div className="my-3" onClick={handleClick}>
+      <div className={`p-3 bg-white rounded-xl shadow-sm ${active ? "border-black" : "border-white"} border`}>
         <div className="flex flex-row">
           <div className="w-4/6 ">
             <div className={`w-fit ${getAffiliationColour(affilation)} rounded-2xl px-3 py-0`}>
@@ -93,40 +73,15 @@ const JobListTile = (props: any) => {
               <p className="text-base">
                 <b>Type:</b> <span className="capitalize"> {jobType} </span>
               </p>
-              <p className="text-base">
-                {userRole === "Applicant" &&
-                  ((application !== null && application?.status === "accepted") ||
-                  application?.status === "rejected" ? (
-                    <span className="capitalize">
-                      <b>Application Status:</b>&nbsp;{application?.status}
-                    </span>
-                  ) : (
-                    <>
-                      <b>Application Status:</b>&nbsp;"In Review"
-                    </>
-                  ))}
-              </p>
+              {userRole === "Applicant" && (
+                <p className="text-base">
+                  <b>Application Status:</b>&nbsp;
+                  {application ? <span className="capitalize">{application?.status}</span> : "In Review"}
+                </p>
+              )}
             </div>
           </div>
-          <div className="w-2/6  flex flex-col-reverse text-right">
-            {action === "view-more" || !action ? (
-              <p className="inline-flex items-center flex-row-reverse text-xs text-[#656565]" onClick={handleKnowMore}>
-                <HiOutlineArrowRight />
-                Know more&nbsp;
-              </p>
-            ) : null}
-            {action === "view-questionnaire" ? (
-              <p className="inline-flex items-center flex-row-reverse text-xs text-[#00B633]" onClick={handleFillQuestionnaire}>
-                <HiOutlineArrowRight />
-                Fill Questionnaire&nbsp;
-              </p>
-            ) : null}
-            {action === "view-application" ? (
-              <p className="inline-flex items-center flex-row-reverse text-xs text-[#656565]" onClick={handleViewApplication}>
-                <HiOutlineArrowRight />
-                View Application&nbsp;
-              </p>
-            ) : null}
+          <div className="w-2/6 flex flex-col-reverse text-right">
             <p className="text-3xl">{pay}$/hr</p>
           </div>
         </div>
@@ -135,4 +90,4 @@ const JobListTile = (props: any) => {
   );
 };
 
-export default JobListTile;
+export default SaveJobListTile;
