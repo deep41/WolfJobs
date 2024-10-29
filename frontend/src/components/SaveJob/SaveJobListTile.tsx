@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import { HiOutlineArrowRight, HiOutlineBookmark } from "react-icons/hi";
+import { HiOutlineArrowRight } from "react-icons/hi";
 import { useSearchParams } from "react-router-dom";
 import { useApplicationStore } from "../../store/ApplicationStore";
 import { useUserStore } from "../../store/UserStore";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { saveJobURL } from "../../api/constants";
 
 const JobListTile = (props: any) => {
   const { data }: { data: Job } = props;
@@ -19,7 +16,6 @@ const JobListTile = (props: any) => {
     (state) => state.applicationList
   );
   const [application, setApplication] = useState<Application | null>(null);
-  const [isJobSaved, setIsJobSaved] = useState<boolean>(false);
 
   useEffect(() => {
     const temp: Application | undefined = applicationList.find(
@@ -27,12 +23,6 @@ const JobListTile = (props: any) => {
     );
     setApplication(temp || null);
   }, [data, applicationList, userId]);
-
-  useEffect(() => {
-    const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
-    const jobExists = savedJobs.some((job: Job) => job._id === data._id);
-    setIsJobSaved(jobExists);
-  }, [data]);
 
   const affilation = data.managerAffilication;
   const role = data.name;
@@ -50,30 +40,7 @@ const JobListTile = (props: any) => {
   };
 
 
-  const handleSaveJob = async (e: any) => {
-    e.stopPropagation();
-    try {
-      if (isJobSaved) {
-        // Unsave job
-        await axios.delete(saveJobURL, {
-          data: { jobId: data._id, userId },
-        });
-        setIsJobSaved(false);
-        toast.info("Job unsaved.");
-      } else {
-        // Save job
-        await axios.post(saveJobURL, {
-          jobId: data._id,
-          userId,
-        });
-        setIsJobSaved(true);
-        toast.success("Job saved successfully!");
-      }
-    } catch (error) {
-      console.error("Error saving job:", error);
-      toast.error("Failed to save job.");
-    }
-  };
+
   const getAffiliationTag = (tag: string) => {
     return tag.split("-").join(" ");
   };
@@ -161,15 +128,6 @@ const JobListTile = (props: any) => {
               </p>
             ) : null}
             <p className="text-3xl">{pay}$/hr</p>
-            <button
-              className="ml-4 inline-flex items-center text-black cursor-pointer"
-              onClick={handleSaveJob}
-            >
-              <HiOutlineBookmark className="mr-1 text-2xl" />
-              <span className="text-black">
-                {isJobSaved ? "Unsave Job" : "Save Job"}
-              </span>
-            </button>
           </div>
         </div>
       </div>
