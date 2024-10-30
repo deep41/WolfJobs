@@ -19,9 +19,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": [""]
+    "types": ["vitest/globals"] // Add Vitest types here
   },
-  // "include": ["src"],
   "exclude": ["src/**/*.test.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

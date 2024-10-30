@@ -6,34 +6,29 @@ import JobDetail from "./JobDetails";
 import { useUserStore } from "../../store/UserStore";
 
 const JobDetailView = () => {
-  // eslint-disable-line
-  /* tslint:disable-next-line */
-  const [searchParams] = useSearchParams(); // eslint-disable-line
-  const [jobData, setJobData] = useState<Job | null>();
+  const [searchParams] = useSearchParams();
+  const [jobData, setJobData] = useState<Job | null>(null);
   const [matchedArray, setMatchedArray] = useState<string[]>([]);
   const [skillMatchPercentage, setSkillMatchPercentage] = useState<number>(0);
-  //   let job: Job | undefined | null = null;
   const jobsList = useJobStore((state) => state.jobList);
 
   useEffect(() => {
     const jobId = searchParams.get("jobId");
     if (!!jobId) {
       const job = jobsList.find((item) => item._id === jobId);
-      setJobData(job);
-      console.log("jobData after choosing job", job);
+      setJobData(job || null);
 
       if (job) {
         const jobSkills = job.skills;
         const userSkills = useUserStore.getState().skills;
-        const m = jobSkills.filter((value) => userSkills.includes(value));
-        setMatchedArray(m);
-        const matchCount = m.length;
-        const s = (matchCount / jobSkills.length) * 100;
-        setSkillMatchPercentage(s);
-        console.log("matchCount", matchCount);
-        console.log("for user: ", useUserStore.getState().name);
-        console.log("user skills are: ", userSkills);
-        console.log("percent:  ", skillMatchPercentage);
+        const matchedSkills = jobSkills.filter((value) =>
+          userSkills.includes(value)
+        );
+        setMatchedArray(matchedSkills);
+
+        const matchCount = matchedSkills.length;
+        const matchPercentage = (matchCount / jobSkills.length) * 100;
+        setSkillMatchPercentage(matchPercentage);
       }
     } else {
       setJobData(null);
@@ -41,18 +36,16 @@ const JobDetailView = () => {
   }, [searchParams, jobsList]);
 
   return (
-    <>
-      <div className="w-8/12" style={{ height: "calc(100vh - 72px)" }}>
-        {!jobData && <NoJobSelected />}
-        {!!jobData && (
-          <JobDetail
-            jobData={jobData}
-            matchedSkills={matchedArray}
-            matchedpercent={skillMatchPercentage}
-          />
-        )}
-      </div>
-    </>
+    <div className="w-8/12" style={{ height: "calc(100vh - 72px)" }}>
+      {!jobData && <NoJobSelected />}
+      {!!jobData && (
+        <JobDetail
+          jobData={jobData}
+          matchedSkills={matchedArray}
+          matchedpercent={skillMatchPercentage}
+        />
+      )}
+    </div>
   );
 };
 
