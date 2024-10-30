@@ -16,6 +16,7 @@ describe("JobDetails", () => {
             status: "open",
             location: "Raleigh",
             pay: "100",
+            skills: "React, Node",
             description: "Developer",
             question1: "Work experience?",
             question2: "CGPA?",

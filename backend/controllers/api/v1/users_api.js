@@ -251,6 +251,9 @@ module.exports.getHistory = async function (req, res) {
 
 module.exports.createJob = async function (req, res) {
   let user = await User.findOne({ _id: req.body.id });
+  console.log("Incoming skills:", req.body.skills);
+
+  let skills = req.body.skills ? req.body.skills.split(",").map(skill => skill.trim()) : []; // Split skills string into an array
   check = req.body.skills;
   try {
     let job = await Job.create({
@@ -259,6 +262,7 @@ module.exports.createJob = async function (req, res) {
       managerAffilication: user.affiliation,
       type: req.body.type,
       location: req.body.location,
+      skills: skills,
       description: req.body.description,
       pay: req.body.pay,
       question1: req.body.question1,

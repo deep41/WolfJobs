@@ -17,7 +17,10 @@ type FormValues = {
 
 const JobDetail = (props: any) => {
   const { jobData }: { jobData: Job } = props;
-
+  // Log jobData.skills only in development mode
+  if (process.env.NODE_ENV === "development") {
+    console.log(jobData); // Log only in development mode
+  }
   const jobType = jobData.type === "part-time" ? "Part time" : "Full time";
 
   const applicationList: Application[] = useApplicationStore(
@@ -183,6 +186,20 @@ const JobDetail = (props: any) => {
             <div className="text-3xl p-4">{jobData.pay}$/hr</div>
           </div>
           <div className="h-6" />
+          <div className="text-lg border-b border-gray-300 mb-2 font-bold">
+            Skills
+          </div>
+          <div className="mx-2 mb-2">
+            {jobData.skills && jobData.skills.length > 0 ? (
+              jobData.skills.map((skill, index) => (
+                <span key={index} className="mr-2">
+                  {skill}
+                </span>
+              ))
+            ) : (
+              <span>No skills required.</span>
+            )}
+          </div>
           <div className="text-lg border-b border-gray-300 mb-2 font-bold">
             Description
           </div>

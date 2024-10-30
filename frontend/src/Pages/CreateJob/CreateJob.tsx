@@ -18,6 +18,7 @@ type FormValues = {
   jobtype: string;
   location: string;
   pay: string;
+  skills: string;
   description: string;
 };
 
@@ -30,6 +31,7 @@ const CreateJob = () => {
       jobtype: "",
       location: "",
       pay: "",
+      skills: "",
       description: "",
     },
   });
@@ -45,6 +47,7 @@ const CreateJob = () => {
       jobtype: jobType,
       location: data.location,
       pay: data.pay,
+      skills: data.skills,
       description: data.description,
     };
     navigate("/job_questionnaire", {
@@ -168,20 +171,11 @@ const CreateJob = () => {
                 <TextField
                   label="Skills preferred"
                   type="text"
-                  {...register("skills")}
+                  {...register("skills", {
+                    required: "Skills are required", // You can add validation if needed
+                  })}
                   error={!!errors.skills}
                   helperText={errors.skills?.message}
-                  onChange={(e) => {
-                    // Update form state with comma-separated values
-                    const inputValue = e.target.value;
-                    const skillsArray = inputValue
-                      .split(",")
-                      .map((skill) => skill.trim());
-                    // Register the skills as a comma-separated string
-                    register("skills").onChange({
-                      target: { value: skillsArray.join(", ") },
-                    });
-                  }}
                   sx={{
                     "& label": { paddingLeft: (theme) => theme.spacing(1) },
                     "& input": { paddingLeft: (theme) => theme.spacing(2.5) },
