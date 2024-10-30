@@ -212,7 +212,10 @@ const JobDetail = (props: any) => {
             Description
           </div>
           <div className="text-[#686868] mx-2">{jobData.description}</div>
-          <div className="text-lg border-b border-gray-300 mb-2 font-bold">
+          <div
+            className="text-lg border-b border-gray-300 mb-2 font-bold"
+            id="percontainer"
+          >
             <span className="perc">Skills {matchedpercent} % matched</span>
           </div>
           <div className="mx-2 mb-2">
@@ -225,7 +228,7 @@ const JobDetail = (props: any) => {
                 ))}
               </div>
             ) : (
-              <span>No matched skills.</span>
+              <span></span>
             )}
           </div>
         </div>
