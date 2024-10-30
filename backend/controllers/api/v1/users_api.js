@@ -63,11 +63,76 @@ module.exports.createHistory = async function (req, res) {
   }
 };
 
+// module.exports.signUp = async function (req, res) {
+//   try {
+//     if (req.body.password != req.body.confirm_password) {
+//       return res.json(422, {
+//         message: "Passwords donot match",
+//       });
+//     }
+
+//     User.findOne({ email: req.body.email }, function (err, user) {
+//       if (user) {
+//         res.set("Access-Control-Allow-Origin", "*");
+//         return res.json(200, {
+//           message: "Sign Up Successful, here is your token, plz keep it safe",
+
+//           data: {
+//             //user.JSON() part gets encrypted
+
+//             token: jwt.sign(user.toJSON(), "caloriesapp", {
+//               expiresIn: "100000",
+//             }),
+//             user,
+//           },
+//           success: true,
+//         });
+//       }
+
+//       if (!user) {
+//         let user = User.create(req.body, function (err, user) {
+//           if (err) {
+//             return res.json(500, {
+//               message: "Internal Server Error",
+//             });
+//           }
+
+//           // let userr = User.findOne({ email: req.body.email });
+//           res.set("Access-Control-Allow-Origin", "*");
+//           return res.json(200, {
+//             message: "Sign Up Successful, here is your token, plz keep it safe",
+
+//             data: {
+//               //user.JSON() part gets encrypted
+
+//               token: jwt.sign(user.toJSON(), "caloriesapp", {
+//                 expiresIn: "100000",
+//               }),
+//               user,
+//             },
+//             success: true,
+//           });
+//         });
+//       } else {
+//         return res.json(500, {
+//           message: "Internal Server Error",
+//         });
+//       }
+//     });
+//   } catch (err) {
+//     console.log(err);
+
+//     return res.json(500, {
+//       message: "Internal Server Error",
+//     });
+//   }
+// };
+
 module.exports.signUp = async function (req, res) {
   try {
     if (req.body.password != req.body.confirm_password) {
       return res.json(422, {
-        message: "Passwords donot match",
+        message: "Passwords do not match",
       });
     }
 
@@ -75,11 +140,8 @@ module.exports.signUp = async function (req, res) {
       if (user) {
         res.set("Access-Control-Allow-Origin", "*");
         return res.json(200, {
-          message: "Sign Up Successful, here is your token, plz keep it safe",
-
+          message: "Sign Up Successful, here is your token, please keep it safe",
           data: {
-            //user.JSON() part gets encrypted
-
             token: jwt.sign(user.toJSON(), "caloriesapp", {
               expiresIn: "100000",
             }),
@@ -90,6 +152,11 @@ module.exports.signUp = async function (req, res) {
       }
 
       if (!user) {
+        // Convert skills from a comma-separated string to an array of strings if it's provided as a string.
+        if (typeof req.body.skills === 'string') {
+          req.body.skills = req.body.skills.split(",").map(skill => skill.trim());
+        }
+
         let user = User.create(req.body, function (err, user) {
           if (err) {
             return res.json(500, {
@@ -97,14 +164,10 @@ module.exports.signUp = async function (req, res) {
             });
           }
 
-          // let userr = User.findOne({ email: req.body.email });
           res.set("Access-Control-Allow-Origin", "*");
           return res.json(200, {
-            message: "Sign Up Successful, here is your token, plz keep it safe",
-
+            message: "Sign Up Successful, here is your token, please keep it safe",
             data: {
-              //user.JSON() part gets encrypted
-
               token: jwt.sign(user.toJSON(), "caloriesapp", {
                 expiresIn: "100000",
               }),
@@ -168,7 +231,14 @@ module.exports.editProfile = async function (req, res) {
     // user.dob = req.body.dob;
     check = req.body.skills;
     user.skills = check;
-    user.save();
+
+    if (typeof req.body.skills === 'string') {
+      user.skills = req.body.skills.split(",").map(skill => skill.trim());
+    } else {
+      user.skills = req.body.skills;
+    }
+
+    await user.save();
     res.set("Access-Control-Allow-Origin", "*");
     return res.json(200, {
       message: "User is updated Successfully",
@@ -196,6 +266,7 @@ module.exports.editProfile = async function (req, res) {
   //   });
   // }
 };
+
 module.exports.searchUser = async function (req, res) {
   try {
     var regex = new RegExp(req.params.name, "i");
@@ -332,6 +403,7 @@ module.exports.createApplication = async function (req, res) {
 
     let application = await Application.create({
       // applicantemail: req.body.applicantemail,
+      
       applicantid: req.body.applicantid,
       applicantname: req.body.applicantname,
       applicantemail: req.body.applicantemail,
