@@ -5,6 +5,7 @@ type Job = {
   managerAffilication: string;
   status: string;
   location: string;
+  skills: string[];
   description: string;
   pay: string;
   type: string;

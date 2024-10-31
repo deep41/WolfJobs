@@ -1,31 +1,46 @@
 import { render, screen } from "@testing-library/react";
-import React from "react";
-import JobDetails from "../../../src/components/Job/JobDetails";
-import { MemoryRouter } from "react-router";
+import { describe, it, expect } from "vitest";
+import JobDetail from "../../../src/components/Job/JobDetails.tsx";
 
-describe("JobDetails", () => {
-  it("renders JobDetails", () => {
+describe("JobDetail Component", () => {
+  const mockJobData = {
+    _id: "1",
+    name: "Software Engineer",
+    type: "full-time",
+    location: "Remote",
+    status: "open",
+    skills: ["JavaScript", "React", "Node.js"],
+    description: "Job description here.",
+  };
+
+  const matchedSkills = ["JavaScript", "React"];
+  const matchedPercent = Math.floor(
+    (matchedSkills.length / mockJobData.skills.length) * 100
+  );
+
+  it("should display the Skills keyword below which user skills are displayed", () => {
     render(
-      <MemoryRouter>
-        <JobDetails
-          jobData={{
-            type: "part-time",
-            _id: 1,
-            managerid: 1,
-            name: "Developer",
-            status: "open",
-            location: "Raleigh",
-            pay: "100",
-            description: "Developer",
-            question1: "Work experience?",
-            question2: "CGPA?",
-            question3: "Age?",
-            question4: "Skills?",
-          }}
-        />
-      </MemoryRouter>
+      <JobDetail
+        jobData={mockJobData}
+        matchedSkills={matchedSkills}
+        matchedpercent={matchedPercent}
+      />
     );
-    // const headline = screen.getByText(/Hello/i);
-    // expect(headline).toBeInTheDocument();
+
+    const skillsHeadings = screen.getAllByText(/Skills/i);
+    expect(skillsHeadings.length).toBe(2);
+  });
+
+  it("should display the matched percentage", () => {
+    render(
+      <JobDetail
+        jobData={mockJobData}
+        matchedSkills={matchedSkills}
+        matchedpercent={matchedPercent}
+      />
+    );
+
+    const matchedPercentText = screen.getByText(/Skills 66 % matched/i);
+    expect(matchedPercentText).toBeInTheDocument();
   });
 });

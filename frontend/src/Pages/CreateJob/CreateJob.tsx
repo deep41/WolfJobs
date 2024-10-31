@@ -18,6 +18,7 @@ type FormValues = {
   jobtype: string;
   location: string;
   pay: string;
+  skills: string;
   description: string;
 };
 
@@ -30,6 +31,7 @@ const CreateJob = () => {
       jobtype: "",
       location: "",
       pay: "",
+      skills: "",
       description: "",
     },
   });
@@ -45,6 +47,7 @@ const CreateJob = () => {
       jobtype: jobType,
       location: data.location,
       pay: data.pay,
+      skills: data.skills,
       description: data.description,
     };
     navigate("/job_questionnaire", {
@@ -164,6 +167,24 @@ const CreateJob = () => {
                       borderRadius: "10px",
                     },
                   }}
+                />
+                <TextField
+                  label="Skills preferred"
+                  type="text"
+                  {...register("skills", {
+                    required: "Skills are required",
+                  })}
+                  error={!!errors.skills}
+                  helperText={errors.skills?.message}
+                  sx={{
+                    "& label": { paddingLeft: (theme) => theme.spacing(1) },
+                    "& input": { paddingLeft: (theme) => theme.spacing(2.5) },
+                    "& fieldset": {
+                      paddingLeft: (theme) => theme.spacing(1.5),
+                      borderRadius: "10px",
+                    },
+                  }}
+                  multiline
                 />
                 <TextField
                   label="Job Description"

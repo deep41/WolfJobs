@@ -14,7 +14,6 @@ const JobGrading = (props: any) => {
   const applicationList = useApplicationStore((state) => state.applicationList);
 
   useEffect(() => {
-    // let displayList: Application[] = [];s
     setDisplayList(
       applicationList.filter(
         (item) => item.jobid === jobData._id && item.status === "grading"

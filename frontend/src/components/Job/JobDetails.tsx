@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useApplicationStore } from "../../store/ApplicationStore";
 import { Stack, TextField } from "@mui/material";
 import JobManagerView from "./JobManagerView";
+import "./Job.css";
 
 type FormValues = {
   answer1: string;
@@ -16,8 +17,16 @@ type FormValues = {
 };
 
 const JobDetail = (props: any) => {
-  const { jobData }: { jobData: Job } = props;
-
+  const {
+    jobData,
+    matchedSkills,
+    matchedpercent,
+  }: {
+    jobData: Job;
+    matchedSkills: string[];
+    matchedpercent: number;
+  } = props;
+  console.log("matchedperc", matchedpercent);
   const jobType = jobData.type === "part-time" ? "Part time" : "Full time";
 
   const applicationList: Application[] = useApplicationStore(
@@ -184,9 +193,42 @@ const JobDetail = (props: any) => {
           </div>
           <div className="h-6" />
           <div className="text-lg border-b border-gray-300 mb-2 font-bold">
+            Skills
+          </div>
+          <div className="mx-2 mb-2">
+            {jobData.skills && jobData.skills.length > 0 ? (
+              jobData.skills.map((skill, index) => (
+                <span key={index} className="mr-2">
+                  {skill}
+                </span>
+              ))
+            ) : (
+              <span>No skills required.</span>
+            )}
+          </div>
+          <div className="text-lg border-b border-gray-300 mb-2 font-bold">
             Description
           </div>
           <div className="text-[#686868] mx-2">{jobData.description}</div>
+          <div
+            className="text-lg border-b border-gray-300 mb-2 font-bold"
+            id="percontainer"
+          >
+            <span className="perc">Skills {matchedpercent} % matched</span>
+          </div>
+          <div className="mx-2 mb-2">
+            {matchedSkills.length > 0 ? (
+              <div>
+                {matchedSkills.map((skill, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <span className="mr-2">{skill}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <span></span>
+            )}
+          </div>
         </div>
       </div>
 

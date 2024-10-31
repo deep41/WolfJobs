@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
     skills: {
-      type: String,
+      type: [String],
       default: "",
     },
     savedJobs: [

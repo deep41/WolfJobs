@@ -21,7 +21,6 @@ const JobFinalReview = (props: any) => {
         (item) => item.jobid === jobData._id && item.status === "rejected"
       )
     );
-    // console.log(applicationList);
   }, [searchParams]);
 
   return (

@@ -1,0 +1,19 @@
+.perc {
+    align-items: center;
+    padding: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background-color: #b6ec99;
+    border-radius: 20%;
+    color: #020400;
+    margin-left: 20px; 
+  }
+
+#percontainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+  

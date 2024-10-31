@@ -6,6 +6,7 @@ import { AiFillCheckCircle } from "react-icons/ai";
 import { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { s } from "vitest/dist/reporters-5f784f42.js";
 
 type FormValuesQuestions = {
   question1: string;
@@ -19,6 +20,7 @@ type FormValuesDetails = {
   jobtype: string;
   location: string;
   pay: string;
+  skills: string;
   description: string;
 };
 
@@ -43,6 +45,7 @@ const JobPreview = () => {
       name: details.role,
       type: details.jobtype,
       location: details.location,
+      skills: details.skills,
       description: details.description,
       pay: details.pay,
       question1: questions.question1,
@@ -127,6 +130,11 @@ const JobPreview = () => {
               </div>
               <div className="text-3xl p-4">{details["pay"]}$/hr</div>
             </div>
+            <div className="h-6" />
+            <div className="text-lg border-b border-gray-300 mb-2 font-bold">
+              Skills
+            </div>
+            <div className="text-[#686868] mx-2">{details["skills"]}</div>
             <div className="h-6" />
             <div className="text-lg border-b border-gray-300 mb-2 font-bold">
               Description

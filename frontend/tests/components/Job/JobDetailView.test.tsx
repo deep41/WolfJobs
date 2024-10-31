@@ -10,7 +10,5 @@ describe("JobDetailView", () => {
         <JobDetailView />
       </MemoryRouter>
     );
-    // const headline = screen.getByText(/Hello/i);
-    // expect(headline).toBeInTheDocument();
   });
 });
