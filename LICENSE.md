@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2023 Deepak Rajendran, Shafa Hassan, Deep Patel, Janhvani Pendse
+Copyright (c) 2024 Aniruddha Shivananda, Ishika Gandhi and Sai Kavya Marthala
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
