@@ -4,165 +4,107 @@ import { useSearchParams } from "react-router-dom";
 import { useApplicationStore } from "../../store/ApplicationStore";
 import { useUserStore } from "../../store/UserStore";
 
-const JobListTile = (props: any) => {
-  // const { data, action }: { data: Job; action: string | undefined } = props;
-  const { data }: { data: Job } = props;
-  let action = "view-more";
+interface Job {
+  _id: string;
+  type?: string; // Optional type property to prevent errors
+  managerAffilication?: string;
+  name: string;
+  status: string;
+  pay?: string;
+}
 
-  const [active, setActive] = useState<boolean>(true);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const userId = useUserStore((state) => state.id);
+interface Application {
+  jobid: string;
+  applicantid: string;
+  status: string;
+}
 
-  const userRole = useUserStore((state) => state.role);
+const getAffiliationTag = (tag?: string): string => {
+  return tag ? tag.split("-").join(" ").toUpperCase() : "UNKNOWN AFFILIATION";
+};
 
-  const applicationList: Application[] = useApplicationStore(
-    (state) => state.applicationList
-  );
-
+const JobListTile = ({ data }: { data: Job }) => {
+  const [active, setActive] = useState<boolean>(false);
   const [application, setApplication] = useState<Application | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const userId = useUserStore((state) => state.id);
+  const userRole = useUserStore((state) => state.role);
+  
+  const applicationList = useApplicationStore((state) => state.applicationList);
 
+  // Find application for the current job and user
   useEffect(() => {
-    const temp: Application | undefined = applicationList.find(
-      (item: Application) => {
-        return item.jobid === data._id && item.applicantid === userId;
-      }
+    const temp = applicationList.find(
+      (item) => item.jobid === data._id && item.applicantid === userId
     );
     setApplication(temp || null);
-    console.log(temp);
-  }, [data]);
+  }, [data, applicationList, userId]);
 
-  const affilation = data.managerAffilication;
-  const role = data.name;
-  const jobType = data?.type?.split("-")?.join(" ");
-  const pay = data.pay || "0";
-
+  // Set active job based on search params
   useEffect(() => {
     const id = searchParams.get("jobId");
     setActive(data._id === id);
-  }, [searchParams]);
+  }, [searchParams, data._id]);
 
-  const handleClick = (e: any) => {
+  // Handle click event to set active job
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setSearchParams({ jobId: data._id });
   };
 
-  const getAffiliationTag = (tag: string) => {
-    return tag.split("-").join(" ");
-  };
-
-  const getAffiliationColour = (tag: string) => {
-    if (tag === "nc-state-dining") {
-      return "bg-[#FF2A2A]/10";
-    } else if (tag === "campus-enterprises") {
-      return "bg-[#91B0FF]/10";
-    } else if (tag === "wolfpack-outfitters") {
-      return "bg-[#FBD71E]/10";
+  // Get affiliation color based on tag
+  const getAffiliationColour = (tag?: string) => {
+    switch (tag) {
+      case "nc-state-dining":
+        return "bg-[#FF2A2A]/10";
+      case "campus-enterprises":
+        return "bg-[#91B0FF]/10";
+      case "wolfpack-outfitters":
+        return "bg-[#FBD71E]/10";
+      default:
+        return "bg-[#FF2A2A]/10";
     }
-    return "bg-[#FF2A2A]/10";
-  };
-
-  // const isClosed = data.status !== "0";
-
-  const handleKnowMore = (e: any) => {
-    e.stopPropagation();
-    console.log("Know more");
-  };
-  const handleFillQuestionnaire = (e: any) => {
-    e.stopPropagation();
-    console.log("Fill Questionnaire");
-  };
-  const handleViewApplication = (e: any) => {
-    e.stopPropagation();
-    console.log("View Application");
   };
 
   return (
-    <div className="my-3 " onClick={handleClick}>
-      <div
-        className={`p-3 bg-white rounded-xl shadow-sm ${
-          active ? "border-black " : "border-white"
-        } border`}
-      >
+    <div className="my-3" onClick={handleClick}>
+      <div className={`p-3 bg-white rounded-xl shadow-sm ${active ? "border-black" : "border-white"} border`}>
         <div className="flex flex-row">
-          <div className="w-4/6 ">
-            <div
-              className={`w-fit ${getAffiliationColour(
-                affilation
-              )} rounded-2xl px-3 py-0`}
-            >
-              <p className="inline text-xs" style={{ width: "fit-content" }}>
-                {getAffiliationTag(affilation).toUpperCase()}
-              </p>
+          <div className="w-4/6">
+            <div className={`w-fit ${getAffiliationColour(data.managerAffilication)} rounded-2xl px-3 py-0`}>
+              <p className="inline text-xs">{getAffiliationTag(data.managerAffilication)}</p>
             </div>
             <div className="h-1"></div>
             <div className="pl-2">
               <p className="text-base">
-                <b>Role:</b> {role}
+                <b>Role:</b> {data.name}
               </p>
               <p className="text-base">
                 <b>Job Status:</b>
-                <span
-                  className={`${
-                    data.status === "closed" ? "text-[#FF5353]" : ""
-                  }`}
-                >
+                <span className={`${data.status === "closed" ? "text-[#FF5353]" : ""}`}>
                   &nbsp;<span className="capitalize">{data.status}</span>
                 </span>
               </p>
+              {/* Fixing split error by adding fallback */}
               <p className="text-base">
-                <b>Type:</b> <span className="capitalize"> {jobType} </span>
+                <b>Type:</b> <span className="capitalize">{data.type?.split("-").join(" ") || "Unknown Type"}</span>
               </p>
-              <p className="text-base">
-                {userRole === "Applicant" &&
-                  ((application !== null &&
-                    application?.status === "accepted") ||
-                  application?.status === "rejected" ? (
-                    <span className="capitalize">
-                      <b>Application Status:</b>&nbsp;{application?.status}
-                    </span>
-                  ) : (
-                    <>
-                      <b>Application Status:</b>&nbsp;"In Review"
-                    </>
-                  ))}
-              </p>
+              {userRole === "Applicant" && (
+                <p className="text-base">
+                  <b>Application Status:</b>&nbsp;
+                  {application?.status === "accepted" || application?.status === "rejected"
+                    ? application?.status
+                    : '"In Review"'}
+                </p>
+              )}
             </div>
           </div>
-          <div className="w-2/6  flex flex-col-reverse text-right">
-            {action === "view-more" || !action ? (
-              <p
-                className="inline-flex items-center flex-row-reverse text-xs text-[#656565]"
-                onClick={handleKnowMore}
-              >
-                <HiOutlineArrowRight />
-                Know more&nbsp;
-              </p>
-            ) : (
-              <></>
-            )}
-            {action === "view-questionnaire" ? (
-              <p
-                className="inline-flex items-center flex-row-reverse text-xs text-[#00B633]"
-                onClick={handleFillQuestionnaire}
-              >
-                <HiOutlineArrowRight />
-                Fill Questionnaire&nbsp;
-              </p>
-            ) : (
-              <></>
-            )}
-            {action === "view-application" ? (
-              <p
-                className="inline-flex items-center flex-row-reverse text-xs text-[#656565]"
-                onClick={handleViewApplication}
-              >
-                <HiOutlineArrowRight />
-                View Application&nbsp;
-              </p>
-            ) : (
-              <></>
-            )}
-            <p className="text-3xl">{pay}$/hr</p>
+
+          <div className="w-2/6 flex flex-col-reverse text-right">
+            {/* Action buttons */}
+            {/* Add action button logic here if needed */}
+            <p className="text-3xl">{data.pay || "0"}$/hr</p>
           </div>
         </div>
       </div>

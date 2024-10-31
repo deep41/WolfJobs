@@ -155,7 +155,8 @@ const JobDetail = (props: any) => {
                 </span>
               </div>
               <div>
-                <span className="font-semibold text-lg capitalize">Type:</span>
+              <span className="font-semibold text-lg capitalize">Type:</span> &nbsp; 
+  {jobData.type?.split("-").join(" ") || "Unknown Type"}
                 &nbsp;
                 {jobType}
               </div>
