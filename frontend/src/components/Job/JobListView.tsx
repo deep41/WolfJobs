@@ -4,7 +4,6 @@ import JobListTile from "./JobListTile";
 interface Job {
   _id: string;
   type: string;
-  // Add other job properties as needed
 }
 
 interface JobsListViewProps {
@@ -32,6 +31,11 @@ const JobsListView: React.FC<JobsListViewProps> = ({ jobsList, title = "All jobs
     { label: "Part Time", value: "part-time" },
   ];
 
+  // New Effect to log jobsList update
+  useEffect(() => {
+    console.log("Jobs list updated:", jobsList);
+  }, [jobsList]);
+
   return (
     <div className="w-4/12 bg-white/60 overflow-y-scroll overflow-x-hidden pt-2 px-9">
       <h2 className="text-2xl py-4">{title}</h2>
@@ -48,11 +52,17 @@ const JobsListView: React.FC<JobsListViewProps> = ({ jobsList, title = "All jobs
           </button>
         ))}
       </div>
-      {filteredJobs.map((job) => (
-        <JobListTile data={job} key={job._id} />
-      ))}
+      {/* Empty state message if no jobs available */}
+      {filteredJobs.length === 0 ? (
+        <p className="text-gray-500">No jobs available for this filter.</p>
+      ) : (
+        filteredJobs.map((job) => (
+          <JobListTile data={job} key={job._id} />
+        ))
+      )}
     </div>
   );
 };
 
 export default JobsListView;
+
