@@ -14,7 +14,7 @@ interface JobsListViewProps {
 
 type FilterType = 'all' | 'full-time' | 'part-time';
 
-const JobsListView: React.FC<JobsListViewProps> = ({ jobsList, title = "All jobs" }) => {
+const JobsListView: React.FC<JobsListViewProps> = ({ jobsList = [], title = "All jobs" }) => {
   const [filter, setFilter] = useState<FilterType>("all");
 
   const filteredJobs = useMemo(() => {
