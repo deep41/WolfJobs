@@ -1,15 +1,15 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: daily-build-check
+name: npm-test-upload
 
-# on:
-#   push:
-#     branches: ["master"]
-#   pull_request:
-#     branches: ["master"]
-#   schedule:
-#     - cron: "0 3 * * *"
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+    types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:  # Allow manual triggers
 
 jobs:
   build:
@@ -17,32 +17,47 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [18.x, 16.x]  # Adjust versions as needed.
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+
       - name: Install packages
         working-directory: ./frontend
         run: |
-          npm i
+          npm ci  # Use npm ci for a clean install based on package-lock.json
 
       - name: Run build
         working-directory: ./frontend
         run: |
           npm run build --if-present
 
+      - name: Run tests
+        working-directory: ./frontend
+        run: |
+          npm run test  # Ensure this command runs your tests.
+
       - name: Run tests & coverage
         working-directory: ./frontend
         run: |
           npm run coverage
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-without-markdown
+          path: |
+            frontend/dist
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           path: /frontend/coverage
+
