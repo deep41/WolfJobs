@@ -29,6 +29,9 @@ const Header = () => {
                   <NavBarItem link="/dashboard" text="My Applications" />
                 )}
                 {isLoggedIn && <NavBarItem link="/explore" text="All jobs" />}
+                {role == "Applicant" && isLoggedIn && (
+                  <NavBarItem link="/savedJobs" text="Saved Jobs" />
+                )}
               </ul>
               <NavBar />
             </div>

@@ -638,3 +638,77 @@ module.exports.verifyOtp = async function (req, res) {
     });
   }
 };
+module.exports.saveJob = async function (req, res) {
+  try {
+    const { userId, jobId } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+
+    if (jobId) {
+      if (!user.savedJobs.includes(jobId)) {
+        user.savedJobs.push(jobId);
+        await user.save();
+      }
+      await user.populate('savedJobs');
+
+      return res.status(200).json({
+        message: "Job saved successfully",
+        success: true,
+        data: user.savedJobs,
+      });
+    } else {
+      await user.populate('savedJobs');
+
+      return res.status(200).json({
+        message: "List of saved jobs retrieved successfully",
+        success: true,
+        data: user.savedJobs,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: err.message,
+      success: false,
+    });
+  }
+};
+
+module.exports.unsaveJob = async function (req, res) {
+  try {
+    const { userId, jobId } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    user.savedJobs = user.savedJobs.filter(id => id != jobId);
+    await user.save();
+    await user.populate('savedJobs');
+
+    return res.status(200).json({
+      message: "Job unsaved successfully",
+      success: true,
+      data: user.savedJobs,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: err.message,
+      success: false,
+    });
+  }
+};
