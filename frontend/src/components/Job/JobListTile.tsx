@@ -5,7 +5,6 @@ import { useApplicationStore } from "../../store/ApplicationStore";
 import { useUserStore } from "../../store/UserStore";
 
 const JobListTile = (props: any) => {
-  // const { data, action }: { data: Job; action: string | undefined } = props;
   const { data }: { data: Job } = props;
   let action = "view-more";
 
@@ -60,8 +59,6 @@ const JobListTile = (props: any) => {
     }
     return "bg-[#FF2A2A]/10";
   };
-
-  // const isClosed = data.status !== "0";
 
   const handleKnowMore = (e: any) => {
     e.stopPropagation();

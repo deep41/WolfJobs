@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import JobDetail from "/Users/ishikag/Documents/Fall_2024/SE/WolfJobs/frontend/src/components/Job/JobDetails.tsx"; // Adjust the import path as needed
+import JobDetail from "../../../src/components/Job/JobDetails.tsx";
 
 describe("JobDetail Component", () => {
   const mockJobData = {
@@ -27,9 +27,8 @@ describe("JobDetail Component", () => {
       />
     );
 
-    // Check if the Skills heading is present twice
     const skillsHeadings = screen.getAllByText(/Skills/i);
-    expect(skillsHeadings.length).toBe(2); // Ensure there are exactly 2 instances of "Skills"
+    expect(skillsHeadings.length).toBe(2);
   });
 
   it("should display the matched percentage", () => {
@@ -41,7 +40,6 @@ describe("JobDetail Component", () => {
       />
     );
 
-    // Check if the matched percentage is displayed
     const matchedPercentText = screen.getByText(/Skills 66 % matched/i);
     expect(matchedPercentText).toBeInTheDocument();
   });

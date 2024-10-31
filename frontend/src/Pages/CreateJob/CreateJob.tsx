@@ -172,7 +172,7 @@ const CreateJob = () => {
                   label="Skills preferred"
                   type="text"
                   {...register("skills", {
-                    required: "Skills are required", // You can add validation if needed
+                    required: "Skills are required",
                   })}
                   error={!!errors.skills}
                   helperText={errors.skills?.message}

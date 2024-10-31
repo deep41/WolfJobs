@@ -9,7 +9,6 @@ import JobsListView from "../../components/Job/JobListView";
 import JobDetailView from "../../components/Job/JobDetailView";
 import { useJobStore } from "../../store/JobStore";
 import { useApplicationStore } from "../../store/ApplicationStore";
-// const userId = useUserStore((state) => state.id);
 
 const Explore = () => {
   const naviagte = useNavigate();

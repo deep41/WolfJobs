@@ -26,8 +26,6 @@ const JobDetail = (props: any) => {
     matchedSkills: string[];
     matchedpercent: number;
   } = props;
-  // Log jobData.skills only in development mode
-  // Log only in development mode
   console.log("matchedperc", matchedpercent);
   const jobType = jobData.type === "part-time" ? "Part time" : "Full time";
 
