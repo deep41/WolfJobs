@@ -4,6 +4,7 @@ import JobListTile from "./JobListTile";
 interface Job {
   _id: string;
   type: string;
+  // Add other job properties as needed
 }
 
 interface JobsListViewProps {

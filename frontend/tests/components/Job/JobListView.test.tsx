@@ -1,14 +1,22 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
-import JobListView from "../../../src/components/Job/JobListView";
+import JobsListView from "../../../src/components/Job/JobsListView";
 import { MemoryRouter } from "react-router-dom";
 
-describe("JobListView", () => {
-  it("renders JobListView", () => {
+describe("JobsListView", () => {
+  it("renders JobsListView", () => {
+    const mockJobs = [
+      { _id: "1", type: "full-time" },
+      { _id: "2", type: "part-time" },
+    ];
+
     render(
       <MemoryRouter>
-        <JobListView JobList={{ _id: 1 }} title="All jobs" />
+        <JobsListView jobsList={mockJobs} title="All jobs" />
       </MemoryRouter>
     );
+
+    // You can add assertions here to verify correct rendering
+    expect(screen.getByText("All jobs")).toBeInTheDocument();
   });
 });
